@@ -15,7 +15,6 @@ public class SignupDto {
     private String name;
     private String address;
     private String phone;
-    private String role;
 
     public User toEntity() {
         return User.builder()
@@ -25,7 +24,6 @@ public class SignupDto {
                 .name(name)
                 .address(address)
                 .phone(phone)
-                .role(role)
                 .build();
     }
 }

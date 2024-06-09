@@ -6,7 +6,6 @@ import org.nimo.aquarium.domain.user.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -14,18 +13,16 @@ import java.util.Collection;
 @Setter
 public class PrincipalDetails implements UserDetails {
 
-    @Serial
     private static final long serialVersionUID = 1L;
 
     private User user;
 
-    public PrincipalDetails(User user){ this.user = user; }
+    public PrincipalDetails(User user) { this.user = user;}
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
         Collection<GrantedAuthority> collector = new ArrayList<>();
-        collector.add(() -> { return user.getRole();});
 
         return collector;
     }
@@ -35,9 +32,6 @@ public class PrincipalDetails implements UserDetails {
 
     @Override
     public String getUsername() { return user.getUsername(); }
-
-    @Override
-    public boolean isAccountNonExpired() { return true; }
 
     @Override
     public boolean isAccountNonLocked() { return true; }

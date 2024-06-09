@@ -39,83 +39,8 @@ public class ItemController {
         return "main";
     }
 
-    @GetMapping("/main")
-    public String mainPage(Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        if (principalDetails.getUser().getRole().equals("ROLE_SELLER")) {
-            int sellerId = principalDetails.getUser().getId();
-            List<Item> items = itemService.allItemView();
-            model.addAttribute("items", items);
-            model.addAttribute("user", userPageService.findUser(sellerId));
 
-            return "/main";
-        } else {
-            int userId = principalDetails.getUser().getId();
-            List<Item> items = itemService.allItemView();
-            model.addAttribute("items", items);
-            model.addAttribute("user", userPageService.findUser(userId));
-
-            return "/main";
-        }
-    }
-
-    @GetMapping("/item/new")
-    public String itemSaveForm(@AuthenticationPrincipal PrincipalDetails principalDetails, Model model) {
-        if(principalDetails.getUser().getRole().equals("ROLE_SELLER")) {
-            model.addAttribute("user", principalDetails.getUser());
-            return "/seller/itemForm";
-        } else {
-            return "redirect:/main";
-        }
-    }
-
-    @PostMapping("/item/new/pro")
-    public String itemSave(Item item, @AuthenticationPrincipal PrincipalDetails principalDetails, MultipartFile imgFile) throws Exception {
-        if(principalDetails.getUser().getRole().equals("ROLE_SELLER")) {
-            item.setSeller(principalDetails.getUser());
-            itemService.saveItem(item, imgFile);
-
-            return "redirect:/main";
-        } else {
-            return "redirect:/main";
-        }
-    }
-
-    @GetMapping("/item/modify/{id}")
-    public String itemModifyForm(@PathVariable("id") Integer id, Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        if(principalDetails.getUser().getRole().equals("ROLE_SELLER")) {
-            User user = itemService.itemView(id).getSeller();
-            if(user.getId() == principalDetails.getUser().getId()) {
-
-                model.addAttribute("item", itemService.itemView(id));
-                model.addAttribute("user", principalDetails.getUser());
-
-                return "/seller/itemModify";
-            } else {
-                return "redirect:/main";
-            }
-        } else {
-            return "redirect:/main";
-        }
-    }
-
-    @PostMapping("/item/modify/pro/{id}")
-    public String itemModify(Item item, @PathVariable("id") Integer id, @AuthenticationPrincipal PrincipalDetails principalDetails, MultipartFile imgFile) throws Exception{
-        if(principalDetails.getUser().getRole().equals("ROLE_SELLER")) {
-            User user = itemService.itemView(id).getSeller();
-
-            if(user.getId() == principalDetails.getUser().getId()) {
-                itemService.itemModify(item, id, imgFile);
-
-                return "redirect:/main";
-            } else {
-                return "redirect:/main";
-            }
-        } else {
-            return "redirect:/main";
-        }
-    }
-
-    @GetMapping("/item/view/{itemId}")
+/*    @GetMapping("/item/view/{itemId}")
     public String ItemView(Model model, @PathVariable("itemId") Integer id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         if(principalDetails.getUser().getRole().equals("ROLE_SELLER")) {
             User user = principalDetails.getUser();
@@ -143,30 +68,13 @@ public class ItemController {
 
             return "itemView";
         }
-    }
+    }*/
 
     @GetMapping("/item/view/nonlogin/{id}")
     public String nonLoginItemView(Model model, @PathVariable("id") Integer id) {
         model.addAttribute("item", itemService.itemView(id));
         return "itemView";
 
-    }
-
-    @GetMapping("/item/delete/{id}")
-    public String itemDelete(@PathVariable("id") Integer id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        if(principalDetails.getUser().getRole().equals("ROLE_SELLER")) {
-            User user = itemService.itemView(id).getSeller();
-
-            if(user.getId() == principalDetails.getUser().getId()) {
-                itemService.itemDelete(id);
-
-                return "redirect:/main";
-            } else {
-                return "redirect:/main";
-            }
-        } else {
-            return "redirect:/main";
-        }
     }
 
     @GetMapping("/item/list")
