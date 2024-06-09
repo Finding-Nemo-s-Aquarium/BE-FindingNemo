@@ -39,4 +39,8 @@ public class ItemService {
         return itemRepository.findByNameContaining(searchKeyword, pageable);
     }
 
+    // save 메서드 추가
+    public Item save(Item item) {
+        return itemRepository.save(item);
+    }
 }

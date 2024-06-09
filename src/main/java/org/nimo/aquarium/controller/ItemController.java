@@ -16,9 +16,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -38,37 +36,6 @@ public class ItemController {
 
         return "main";
     }
-
-
-/*    @GetMapping("/item/view/{itemId}")
-    public String ItemView(Model model, @PathVariable("itemId") Integer id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        if(principalDetails.getUser().getRole().equals("ROLE_SELLER")) {
-            User user = principalDetails.getUser();
-
-            model.addAttribute("item", itemService.itemView(id));
-            model.addAttribute("user", user);
-
-            return "itemView";
-        } else {
-            User user = principalDetails.getUser();
-
-            User loginUser = userPageService.findUser(user.getId());
-
-            int cartCount = 0;
-            Cart userCart = cartService.findUserCart(loginUser.getId());
-            List<CartItem> cartItems = cartService.allUserCartView(userCart);
-
-            for(CartItem cartItem : cartItems) {
-                cartCount += cartItem.getCount();
-            }
-
-            model.addAttribute("cartCount", cartCount);
-            model.addAttribute("item", itemService.itemView(id));
-            model.addAttribute("user", user);
-
-            return "itemView";
-        }
-    }*/
 
     @GetMapping("/item/view/nonlogin/{id}")
     public String nonLoginItemView(Model model, @PathVariable("id") Integer id) {
@@ -126,5 +93,20 @@ public class ItemController {
         model.addAttribute("endPage", endPage);
 
         return "itemList";
+    }
+
+    // 새로운 API 엔드포인트 추가 시작
+    // POST 요청을 통해 새로운 아이템을 생성
+    @PostMapping("/api/items")
+    @ResponseBody
+    public Item createItem(@RequestBody Item item) {
+        return itemService.save(item);  // itemService.save 메서드를 통해 아이템을 저장
+    }
+
+    // GET 요청을 통해 모든 아이템을 조회
+    @GetMapping("/api/items")
+    @ResponseBody
+    public List<Item> getAllItems() {
+        return itemService.allItemView();
     }
 }

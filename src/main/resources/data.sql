@@ -1,5 +1,5 @@
 -- Categories 삽입
-INSERT INTO categories (name, parent_id) VALUES ('shop', NULL);
+INSERT INTO categories (name) VALUES ('shop');
 INSERT INTO categories (name, parent_id) VALUES ('어항', 1);
 INSERT INTO categories (name, parent_id) VALUES ('물고기', 1);
 INSERT INTO categories (name, parent_id) VALUES ('수초', 1);
