@@ -8,6 +8,8 @@ import org.nimo.aquarium.domain.cartitem.CartItemRepository;
 import org.nimo.aquarium.domain.item.Item;
 import org.nimo.aquarium.domain.item.ItemRepository;
 import org.nimo.aquarium.domain.user.User;
+import org.nimo.aquarium.web.dto.auth.CartSummary;
+import org.nimo.aquarium.web.dto.auth.CartItemSummary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,17 +25,14 @@ public class CartService {
     private final CartItemRepository cartItemRepository;
 
     // 회원가입 하면 회원당 카트 하나 생성
-    public void createCart(User user){
-
+    public void createCart(User user) {
         Cart cart = Cart.createCart(user);
-
         cartRepository.save(cart);
     }
 
     // 장바구니 담기
     @Transactional
     public void addCart(User user, Item newItem, int amount) {
-
         // 유저 id로 해당 유저의 장바구니 찾기
         Cart cart = cartRepository.findByUserId(user.getId());
 
@@ -50,10 +49,8 @@ public class CartService {
         if (cartItem == null) {
             cartItem = CartItem.createCartItem(cart, item, amount);
             cartItemRepository.save(cartItem);
-        }
-
-        // 상품이 장바구니에 이미 존재한다면 수량만 증가
-        else {
+        } else {
+            // 상품이 장바구니에 이미 존재한다면 수량만 증가
             CartItem update = cartItem;
             update.setCart(cartItem.getCart());
             update.setItem(cartItem.getItem());
@@ -63,21 +60,17 @@ public class CartService {
         }
 
         // 카트 상품 총 개수 증가
-        cart.setCount(cart.getCount()+amount);
-
+        cart.setCount(cart.getCount() + amount);
     }
 
     // 유저 id로 해당 유저의 장바구니 찾기
     public Cart findUserCart(int userId) {
-
         return cartRepository.findCartByUserId(userId);
-
     }
 
     // 카트 상품 리스트 중 해당하는 유저가 담은 상품만 반환
     // 유저의 카트 id와 카트상품의 카트 id가 같아야 함
     public List<CartItem> allUserCartView(Cart userCart) {
-
         // 유저의 카트 id를 꺼냄
         int userCartId = userCart.getId();
 
@@ -87,8 +80,8 @@ public class CartService {
         // 유저 상관 없이 카트에 있는 상품 모두 불러오기
         List<CartItem> CartItems = cartItemRepository.findAll();
 
-        for(CartItem cartItem : CartItems) {
-            if(cartItem.getCart().getId() == userCartId) {
+        for (CartItem cartItem : CartItems) {
+            if (cartItem.getCart().getId() == userCartId) {
                 UserCartItems.add(cartItem);
             }
         }
@@ -98,42 +91,47 @@ public class CartService {
 
     // 카트 상품 리스트 중 해당하는 상품 id의 상품만 반환
     public List<CartItem> findCartItemByItemId(int id) {
-
-        List<CartItem> cartItems = cartItemRepository.findCartItemByItemId(id);
-
-        return cartItems;
+        return cartItemRepository.findCartItemByItemId(id);
     }
 
     // 카트 상품 리스트 중 해당하는 상품 id의 상품만 반환
     public CartItem findCartItemById(int id) {
-
-        CartItem cartItem = cartItemRepository.findCartItemById(id);
-
-        return cartItem;
+        return cartItemRepository.findCartItemById(id);
     }
 
     // 장바구니의 상품 개별 삭제
     public void cartItemDelete(int id) {
-
         cartItemRepository.deleteById(id);
     }
 
     // 장바구니 아이템 전체 삭제 -> 매개변수는 유저 id
     public void allCartItemDelete(int id) {
-
         // 전체 cartItem 찾기
         List<CartItem> cartItems = cartItemRepository.findAll();
 
-        // 반복문을 이용하여 해당하는 User 의 CartItem 만 찾아서 삭제
-        for(CartItem cartItem : cartItems){
-
-            if(cartItem.getCart().getUser().getId() == id) {
-
+        // 반복문을 이용하여 해당하는 User의 CartItem만 찾아서 삭제
+        for (CartItem cartItem : cartItems) {
+            if (cartItem.getCart().getUser().getId() == id) {
                 cartItem.getCart().setCount(0);
-
                 cartItemRepository.deleteById(cartItem.getId());
             }
         }
     }
 
+    // 장바구니 요약 정보 제공 메서드 추가
+    public CartSummary getCartSummary(int userId) {
+        Cart cart = cartRepository.findByUserId(userId);
+        List<CartItem> cartItems = cartItemRepository.findByCartId(cart.getId());
+
+        double total = 0;
+        List<CartItemSummary> itemSummaries = new ArrayList<>();
+
+        for (CartItem cartItem : cartItems) {
+            double itemTotal = cartItem.getCount() * cartItem.getItem().getPrice();
+            total += itemTotal;
+            itemSummaries.add(new CartItemSummary(cartItem.getItem().getName(), cartItem.getCount(), itemTotal));
+        }
+
+        return new CartSummary(itemSummaries, total);
+    }
 }

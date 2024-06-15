@@ -7,19 +7,18 @@ import org.nimo.aquarium.domain.cartitem.CartItem;
 import org.nimo.aquarium.domain.item.Item;
 import org.nimo.aquarium.domain.user.User;
 import org.nimo.aquarium.service.*;
+import org.nimo.aquarium.web.dto.auth.CartSummary;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
-@Controller
+@RestController
 public class UserPageController {
 
     private final UserPageService userPageService;
@@ -98,14 +97,28 @@ public class UserPageController {
 
     // 장바구니에 물건 넣기
     @PostMapping("/user/cart/{id}/{itemId}")
-    public String addCartItem(@PathVariable("id") Integer id, @PathVariable("itemId") Integer itemId, int amount) {
+    public ResponseEntity<Map<String, Object>> addCartItem(@PathVariable("id") Integer id, @PathVariable("itemId") Integer itemId,
+                                                           @RequestParam(value = "amount", defaultValue = "0") Integer amount) {
 
         User user = userPageService.findUser(id);
         Item item = itemService.itemView(itemId);
 
         cartService.addCart(user, item, amount);
 
-        return "redirect:/item/view/{itemId}";
+        // 아이템 상세 정보를 포함한 응답 반환
+        Map<String, Object> response = new HashMap<>();
+        response.put("itemId", item.getId());
+        response.put("name", item.getName());
+        response.put("amount", amount);
+        response.put("price", item.getPrice());
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/user/cart/{id}/summary")
+    public ResponseEntity<CartSummary> getCartSummary(@PathVariable("id") int id) {
+        CartSummary cartSummary = cartService.getCartSummary(id);
+        return ResponseEntity.ok(cartSummary);
     }
 
     // 장바구니에서 물건 삭제
