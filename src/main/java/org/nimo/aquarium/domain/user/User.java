@@ -25,8 +25,6 @@ public class User {
     private String address;
     private String phone;
 
-    // 구매자의 장바구니
     @OneToOne(mappedBy = "user")
     private Cart cart;
-
 }

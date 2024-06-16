@@ -1,47 +1,25 @@
 package org.nimo.aquarium.domain.cart;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.nimo.aquarium.domain.cartitem.CartItem;
 import org.nimo.aquarium.domain.user.User;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Entity
 @Getter
 @Setter
-@Entity
 public class Cart {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    private int count;
-
-    @OneToMany(mappedBy = "cart")
-    private List<CartItem> cartItems = new ArrayList<>();
-
-    @DateTimeFormat(pattern = "yyyy-mm-dd")
-    private LocalDate createDate;
-
-    @PrePersist
-    public void createDate(){ this.createDate = LocalDate.now(); }
-
-    public static Cart createCart(User user){
-        Cart cart = new Cart();
-        cart.setCount(0);
-        cart.setUser(user);
-
-        return cart;
-    }
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<CartItem> items;
 }

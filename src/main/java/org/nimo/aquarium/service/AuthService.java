@@ -22,7 +22,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
-    private final CartService cartService;
+    //private final CartService cartService;
     @Transactional
     public User signup(User user) {
         // 비밀번호가 null인지 확인

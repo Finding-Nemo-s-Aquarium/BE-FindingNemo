@@ -1,29 +1,34 @@
 package org.nimo.aquarium.domain.item;
 
-import jakarta.persistence.*;
-import lombok.*;
-import org.nimo.aquarium.domain.category.Category;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
 
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@Setter
-@Getter
 @Entity
-@Table(name = "items")
+@Getter
+@Setter
 public class Item {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
-    @Column(nullable = false)
+    @Getter
     private String name;
+    @Getter
+    private double price;
 
-    @Column(nullable = false)
-    private int price;
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
 }
