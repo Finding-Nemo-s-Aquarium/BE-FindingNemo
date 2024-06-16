@@ -49,11 +49,19 @@ public class CartService {
         for (CartItemDto itemDto : items) {
             Item item = itemRepository.findByName(itemDto.getName());
             if (item != null) {
-                CartItem cartItem = new CartItem();
-                cartItem.setItem(item);
-                cartItem.setAmount(itemDto.getAmount());
-                cartItem.setCart(cart);
-                cartItemRepository.save(cartItem);
+                CartItem cartItem = cartItemRepository.findByCartAndItem(cart, item);
+                if (cartItem != null) {
+                    // 이미 장바구니에 있는 경우 업데이트
+                    cartItem.setAmount(cartItem.getAmount() + itemDto.getAmount());
+                    cartItemRepository.save(cartItem);
+                } else {
+                    // 장바구니에 없는 경우 새로 추가
+                    cartItem = new CartItem();
+                    cartItem.setItem(item);
+                    cartItem.setAmount(itemDto.getAmount());
+                    cartItem.setCart(cart);
+                    cartItemRepository.save(cartItem);
+                }
             }
         }
     }
