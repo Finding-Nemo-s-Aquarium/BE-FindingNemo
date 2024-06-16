@@ -6,6 +6,7 @@ import org.nimo.aquarium.web.dto.auth.CartItemDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -28,8 +29,9 @@ public class CartController {
     }
 
     @PostMapping(value = "/{userId}/items", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void addItemsToCart(@PathVariable int userId, @RequestBody List<CartItemDto> items) {
-        cartService.addItemsToCart(userId, items);
+    public ResponseEntity<Void> addItemsToCart(@PathVariable int userId, @RequestBody List<CartItemDto> items) {
+        cartService.addItemsToCart(userId, items); // 서비스 메서드 호출
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
