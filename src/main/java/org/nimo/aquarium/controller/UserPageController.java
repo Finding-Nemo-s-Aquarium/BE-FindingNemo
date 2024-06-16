@@ -25,7 +25,7 @@ public class UserPageController {
     private final CartService cartService;
     private final ItemService itemService;
 
-    // 유저 페이지 접속
+/*    // 유저 페이지 접속
     @GetMapping("/user/{id}")
     public String userPage(@PathVariable("id") Integer id, Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         // 로그인이 되어있는 유저의 id와 유저 페이지에 접속하는 id가 같아야 함
@@ -93,7 +93,7 @@ public class UserPageController {
         else {
             return "redirect:/main";
         }
-    }
+    }*/
 
     // 장바구니에 물건 넣기
     @PostMapping("/user/cart/{id}/{itemId}")
@@ -121,7 +121,7 @@ public class UserPageController {
         return ResponseEntity.ok(cartSummary);
     }
 
-    // 장바구니에서 물건 삭제
+    /*// 장바구니에서 물건 삭제
     // 삭제하고 남은 상품의 총 개수
     @GetMapping("/user/cart/{id}/{cartItemId}/delete")
     public String deleteCartItem(@PathVariable("id") Integer id, @PathVariable("cartItemId") Integer itemId, Model model, @AuthenticationPrincipal PrincipalDetails principalDetails) {
@@ -166,6 +166,6 @@ public class UserPageController {
         else {
             return "redirect:/main";
         }
-    }
+    }*/
 
 }
