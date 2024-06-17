@@ -137,11 +137,19 @@ public class CartService {
         }
 
         List<CartItemDto> items = cart.getItems().stream()
-                .map(cartItem -> new CartItemDto(cartItem.getItem().getName(), cartItem.getAmount(), cartItem.getAmount() * cartItem.getItem().getPrice()))
+                .map(cartItem -> {
+                    Item item = cartItem.getItem();
+                    return new CartItemDto(
+                            item.getName(),
+                            cartItem.getAmount(),
+                            item.getPrice(),
+                            item.getImgUrl() // imgUrl 필드 추가
+                    );
+                })
                 .collect(Collectors.toList());
 
         double total = items.stream()
-                .mapToDouble(CartItemDto::getPrice)
+                .mapToDouble(item -> item.getPrice() * item.getAmount())
                 .sum();
 
         logger.info("Cart items: {}", items);

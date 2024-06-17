@@ -42,6 +42,7 @@ public class CartController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart not found");
         }
         logger.info("Cart DTO: {}", cartDto);
+        System.out.println("Cart DTO : {}" + cartDto);
         return cartDto;
     }
 }

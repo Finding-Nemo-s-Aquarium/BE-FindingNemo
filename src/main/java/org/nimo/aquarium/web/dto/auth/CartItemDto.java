@@ -1,6 +1,7 @@
 package org.nimo.aquarium.web.dto.auth;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,14 +10,17 @@ public class CartItemDto {
     private String name;
     private int amount;
     private double price;
+    @JsonProperty("img_url")
+    private String imgUrl;
 
     public CartItemDto() {
     }
 
-    public CartItemDto(String name, int amount, double price) {
+    public CartItemDto(String name, int amount, double price, String imgUrl) {
         this.name = name;
         this.amount = amount;
         this.price = price;
+        this.imgUrl = imgUrl;
     }
 
     // Getters and Setters
@@ -50,6 +54,7 @@ public class CartItemDto {
                 "name='" + name + '\'' +
                 ", amount=" + amount +
                 ", price=" + price +
+                ", imgUrl='" + imgUrl + '\'' +
                 '}';
     }
 }

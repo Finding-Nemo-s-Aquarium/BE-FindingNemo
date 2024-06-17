@@ -19,12 +19,16 @@ public class Item {
     @Setter
     @Getter
     private String name;
+
     @Getter
     private double price;
 
-    private String url;
+    @Setter
+    @Getter
+    private String imgUrl;
 
     public void setPrice(double price) {
         this.price = price;
     }
+    public void getImgUrl(String imgUrl) { this.imgUrl = imgUrl;}
 }
