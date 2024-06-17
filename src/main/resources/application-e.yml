@@ -8,9 +8,9 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/aquarium
-    username: root
-    password: 7562
+    url: jdbc:mysql://127.0.0.1:3306/aquarium
+    username: eeee
+    password: 775312
 
   sql:
     init:
