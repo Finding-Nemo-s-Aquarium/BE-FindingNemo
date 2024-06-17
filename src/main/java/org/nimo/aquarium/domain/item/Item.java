@@ -11,22 +11,18 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Item {
+    @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
     @Getter
     private String name;
     @Getter
     private double price;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+    private String url;
 
     public void setPrice(double price) {
         this.price = price;

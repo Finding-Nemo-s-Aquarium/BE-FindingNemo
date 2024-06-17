@@ -31,7 +31,7 @@ public class CartService {
 
     private static final Logger logger = LoggerFactory.getLogger(CartService.class);
 
-    @Transactional
+    /*@Transactional
     public void addItemsToCart(int userId, List<CartItemDto> items) {
         Optional<User> userOptional = Optional.ofNullable(userRepository.findById(userId));
         if (userOptional.isEmpty()) {
@@ -62,6 +62,69 @@ public class CartService {
                     cartItem.setCart(cart);
                     cartItemRepository.save(cartItem);
                 }
+            }
+        }
+    }
+
+    public CartDto getCartByUserId(int userId) {
+        Cart cart = cartRepository.findByUserId(userId);
+        if (cart == null) {
+            logger.warn("Cart not found for user ID: {}", userId);
+            return null;
+        }
+
+        List<CartItemDto> items = cart.getItems().stream()
+                .map(cartItem -> new CartItemDto(cartItem.getItem().getName(), cartItem.getAmount(), cartItem.getAmount() * cartItem.getItem().getPrice()))
+                .collect(Collectors.toList());
+
+        double total = items.stream()
+                .mapToDouble(CartItemDto::getPrice)
+                .sum();
+
+        logger.info("Cart items: {}", items);
+        logger.info("Cart total: {}", total);
+
+        return new CartDto(items, total);
+    }*/
+    @Transactional
+    public void addItemsToCart(int userId, List<CartItemDto> items) {
+        logger.info("Adding items to cart for user ID: {}", userId);
+
+        Optional<User> userOptional = Optional.ofNullable(userRepository.findById(userId));
+        if (userOptional.isEmpty()) {
+            logger.error("User not found: {}", userId);
+            throw new RuntimeException("User not found");
+        }
+        User user = userOptional.get();
+
+        Cart cart = cartRepository.findByUserId(userId);
+        if (cart == null) {
+            cart = new Cart();
+            cart.setUser(user);
+            cart = cartRepository.save(cart);
+            logger.info("Created new cart for user ID: {}", userId);
+        }
+
+        for (CartItemDto itemDto : items) {
+            Item item = itemRepository.findByName(itemDto.getName());
+            if (item != null) {
+                CartItem cartItem = cartItemRepository.findByCartAndItem(cart, item);
+                if (cartItem != null) {
+                    // 이미 장바구니에 있는 경우 업데이트
+                    cartItem.setAmount(cartItem.getAmount() + itemDto.getAmount());
+                    cartItemRepository.save(cartItem);
+                    logger.info("Updated cart item: {} with amount: {}", cartItem.getId(), cartItem.getAmount());
+                } else {
+                    // 장바구니에 없는 경우 새로 추가
+                    cartItem = new CartItem();
+                    cartItem.setItem(item);
+                    cartItem.setAmount(itemDto.getAmount());
+                    cartItem.setCart(cart);
+                    cartItemRepository.save(cartItem);
+                    logger.info("Added new cart item: {} with amount: {}", cartItem.getId(), cartItem.getAmount());
+                }
+            } else {
+                logger.error("Item not found: {}", itemDto.getName());
             }
         }
     }
